@@ -35,7 +35,7 @@ We're going to start building our toolbox by adding our functions. Whenever we w
 # Add tidyverse. You know you're gonna use tidyverse!
 # Consider a unique random seed: set.seed(ANumberThatYouHappenToLike)
 #
-
+library(tidyverse)
 ```
 
 ## Data Import
@@ -51,7 +51,9 @@ Typically, I split this section into two pieces; one explicitly for imports and 
 #read_csv()...
 #data <- left_join(data, otherdata, by = matchingFeature)
 #
-```
+data <- read.csv("../data/parkinsons_data.data")
+glimpse(data) %>% head()
+``` 
 
 
 ```{r dataCleaning}
