@@ -11,11 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r initialization}
-#
-# The libraries you're going to use should go here, at the very top.
-# Add tidyverse. You know you're gonna use tidyverse!
-# Consider a unique random seed: set.seed(ANumberThatYouHappenToLike)
-#
 library(tidyverse)
 library(ggplot2)
 library(gtsummary)
@@ -24,19 +19,13 @@ library(dplyr)
 
 
 ```{r dataImport}
-#
-#read_csv()...
-#data <- left_join(data, otherdata, by = matchingFeature)
-#
+
 data <- read.csv("../data/parkinsons_data.data")
 glimpse(data) %>% head()
 ``` 
 
 
 ```{r dataCleaning}
-#
-#drop.na()...
-#
 data <- rename(data, subject = subject.)
 sub_counts <- group_by(data, subject) %>% count(subject)
 sub_counts
