@@ -1,6 +1,6 @@
 ---
 title: "Lab-04c-capstone-prep"
-author: "Peyton Politewicz"
+author: "Pingyao Liu"
 date: "2024-07-10"
 output: html_document
 ---
@@ -38,6 +38,7 @@ We're going to start building our toolbox by adding our functions. Whenever we w
 library(tidyverse)
 library(ggplot2)
 library(gtsummary)
+library(dplyr)
 ```
 
 ## Data Import
@@ -62,7 +63,8 @@ glimpse(data) %>% head()
 #
 #drop.na()...
 #
-sub_counts <- group_by(data, subject.) %>% count(subject.)
+data <- rename(data, subject = subject.)
+sub_counts <- group_by(data, subject) %>% count(subject)
 sub_counts
 ```
 
@@ -70,7 +72,7 @@ sub_counts
 ## Exploratory Data Analysis
 
 ```{r}
-gender_count <- group_by(data, sex, subject.) %>% count(sex)
+gender_count <- group_by(data, sex, subject) %>% count(sex)
 gender_count
 ```
 
