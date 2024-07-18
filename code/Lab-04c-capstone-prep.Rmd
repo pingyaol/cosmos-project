@@ -54,7 +54,7 @@ ggplot(data, aes(x = test_time, y = total_UPDRS, group = subject, color = factor
 ```
 This shows the relationship between age and total UPDRS score of PD patients.
 ```{r}
-ggplot(data = data) +
+ggplot(data = mean_vals) +
   geom_point(aes(x = age, y = total_UPDRS), color = "violet") +
   labs(x = "Age", y = "Total UPDRS") +
   theme_minimal()
