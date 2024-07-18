@@ -59,13 +59,7 @@ ggplot(data = data) +
   labs(x = "Age", y = "Total UPDRS") +
   theme_minimal()
 ```
-```{r}
-ggplot(data = data, aes(x = Jitter.Abs., y = total_UPDRS)) +
-  geom_point(size = 1, color = "violet") +
-  labs(x = "Absolute Jitters (microsecond)", y = "Total UPDRS") +
-  theme_minimal()
 
-```
 The dataset has 42 subjects, with 28 males and 14 females. Each subject had a different number of recordings, with the number ranging from 101 to 168. Due to the discrepancy between the number of recordings available to each subject, we decided to <INSERT PLAN HERE>. 
 
 We took the mean of all the metrics. 
@@ -80,4 +74,13 @@ mean_vals
 ```{r}
 gender_count <- group_by(data, sex, subject) %>% count(sex)
 gender_count
+```
+
+Scatterplot of mean total UPDRS scores of the 42 subjects 
+```{r}
+ggplot(data = mean_vals, aes(x = Jitter.Abs., y = total_UPDRS)) +
+  geom_point(size = 1, color = "violet") +
+  labs(x = "Absolute Jitters (microsecond)", y = "Total UPDRS") +
+  theme_minimal()
+
 ```
