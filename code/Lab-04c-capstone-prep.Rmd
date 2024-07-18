@@ -69,3 +69,31 @@ mean_vals
 gender_count <- group_by(data, sex, subject) %>% count(sex)
 gender_count
 ```
+```{r}
+ggplot(data = mean_vals, aes(x = Shimmer, y = total_UPDRS)) +
+  geom_point(size = 1, color = "violet") +
+  labs(x = "Shimmer", y = "Total UPDRS") +
+  theme_minimal()
+lm(formula = total_UPDRS ~ Shimmer + Jitter.Abs., data = data) %>% 
+    tbl_regression(estimate_fun = function(x) style_number(x, digits = 3))
+
+```
+Jitter.Abs., Jitter.RAP, Jitter.PPQ5, Jitter.DDP is related to UPDRS score based on p-value
+``` {r}
+lm(formula = total_UPDRS ~ Jitter.RAP, data = data) %>% 
+    tbl_regression(estimate_fun = function(x) style_number(x, digits = 3))
+
+```
+``` {r}
+lm(formula = total_UPDRS ~ Jitter.PPQ5, data = data) %>% 
+    tbl_regression(estimate_fun = function(x) style_number(x, digits = 3))
+
+```
+``` {r}
+lm(formula = total_UPDRS ~ Jitter.DDP, data = data) %>% 
+    tbl_regression(estimate_fun = function(x) style_number(x, digits = 3))
+```
+``` {r}
+lm(formula = total_UPDRS ~ Shimmer.dB., data = data) %>% 
+    tbl_regression(estimate_fun = function(x) style_number(x, digits = 3))
+```
