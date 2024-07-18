@@ -52,8 +52,20 @@ ggplot(data, aes(x = test_time, y = total_UPDRS, group = subject, color = factor
   scale_y_continuous(limits = c(0, 55), breaks = seq(0, 55, by = 5)) + 
   theme_minimal()
 ```
+This shows the relationship between age and total UPDRS score of PD patients.
+```{r}
+ggplot(data = data) +
+  geom_point(aes(x = age, y = total_UPDRS), color = "violet") +
+  labs(x = "Age", y = "Total UPDRS") +
+  theme_minimal()
+```
+```{r}
+ggplot(data = data, aes(x = Jitter.Abs., y = total_UPDRS)) +
+  geom_point(size = 1, color = "violet") +
+  labs(x = "Absolute Jitters (microsecond)", y = "Total UPDRS") +
+  theme_minimal()
 
-
+```
 The dataset has 42 subjects, with 28 males and 14 females. Each subject had a different number of recordings, with the number ranging from 101 to 168. Due to the discrepancy between the number of recordings available to each subject, we decided to <INSERT PLAN HERE>. 
 
 We took the mean of all the metrics. 
