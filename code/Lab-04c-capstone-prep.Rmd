@@ -40,6 +40,20 @@ ggplot(sub_counts, aes(x = subject, y = n)) +
   theme_minimal()
 ```
 
+```{r, fig.width=12, fig.height=6}
+ggplot(data, aes(x = test_time, y = total_UPDRS, group = subject, color = factor(subject))) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Total UPDRS Over Test Time for Each Subject",
+       x = "Test Time",
+       y = "Total UPDRS",
+       color = "Subject") +
+  scale_x_continuous(limits = c(0, 250), breaks = seq(0, 250, by = 10)) + 
+  scale_y_continuous(limits = c(0, 55), breaks = seq(0, 55, by = 5)) + 
+  theme_minimal()
+```
+
+
 The dataset has 42 subjects, with 28 males and 14 females. Each subject had a different number of recordings, with the number ranging from 101 to 168. Due to the discrepancy between the number of recordings available to each subject, we decided to <INSERT PLAN HERE>. 
 
 We took the mean of all the metrics. 
