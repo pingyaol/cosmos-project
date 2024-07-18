@@ -67,6 +67,14 @@ data <- rename(data, subject = subject.)
 sub_counts <- group_by(data, subject) %>% count(subject)
 sub_counts
 ```
+Note: graph of # of recordings, slope of the data (days vs updrs score) 
+The dataset has 42 subjects, with 28 males and 14 females. Each subject had a different number of recordings, with the number ranging from 101 to 168. Due to the discrepancy between the number of recordings available to each subject, we decided to <INSERT PLAN HERE>. 
+
+We took the mean of all the metrics. 
+```{r}
+mean_vals <- data %>% group_by(subject) %>% summarise(across(1: PPE, .fns = mean))
+mean_vals
+```
 
 
 ## Exploratory Data Analysis
