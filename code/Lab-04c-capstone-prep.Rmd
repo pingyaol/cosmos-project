@@ -55,4 +55,3 @@ mean_vals
 gender_count <- group_by(data, sex, subject) %>% count(sex)
 gender_count
 ```
-
