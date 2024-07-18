@@ -36,6 +36,8 @@ We're going to start building our toolbox by adding our functions. Whenever we w
 # Consider a unique random seed: set.seed(ANumberThatYouHappenToLike)
 #
 library(tidyverse)
+library(ggplot2)
+library(gtsummary)
 ```
 
 ## Data Import
@@ -60,9 +62,18 @@ glimpse(data) %>% head()
 #
 #drop.na()...
 #
+sub_counts <- group_by(data, subject.) %>% count(subject.)
+sub_counts
 ```
 
+
 ## Exploratory Data Analysis
+
+```{r}
+gender_count <- group_by(data, sex, subject.) %>% count(sex)
+gender_count
+```
+
 
 Here's where the majority of your coding effort will likely take place. In doing EDA, you're going to be slicing, filtering, subsetting, and transforming your data. Break this into subsections with specific goals, and make sure to *save* your figures to the folder with appropriate names!
 
