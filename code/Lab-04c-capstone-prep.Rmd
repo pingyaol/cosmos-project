@@ -39,9 +39,9 @@ ggplot(sub_counts, aes(x = subject, y = n)) +
        y = "N") +
   theme_minimal()
 ```
-
+TODO: remove the subject key 
 ```{r, fig.width=12, fig.height=6}
-ggplot(data, aes(x = test_time, y = total_UPDRS, group = subject, color = factor(subject))) +
+updrs_plot <- ggplot(data, aes(x = test_time, y = total_UPDRS, group = subject, color = factor(subject))) +
   geom_line() +
   geom_point() +
   labs(title = "Total UPDRS Over Test Time for Each Subject",
@@ -51,6 +51,9 @@ ggplot(data, aes(x = test_time, y = total_UPDRS, group = subject, color = factor
   scale_x_continuous(limits = c(0, 250), breaks = seq(0, 250, by = 10)) + 
   scale_y_continuous(limits = c(0, 55), breaks = seq(0, 55, by = 5)) + 
   theme_minimal()
+
+updrs_plot +
+  theme(legend.position = "none")
 ```
 This shows the relationship between age and total UPDRS score of PD patients.
 ```{r}
