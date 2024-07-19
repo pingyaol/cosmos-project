@@ -9,37 +9,33 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 ```{r initialization}
 library(tidyverse)
 library(ggplot2)
 library(gtsummary)
 library(dplyr)
+library(lme4)
+library(lmerTest)
+library(psych)
 ```
 
-
 ```{r dataImport}
-
 data <- read.csv("../data/parkinsons_data.data")
 glimpse(data) %>% head()
 ``` 
 
-
+We took the mean of all the metrics and we will use this for further analysis before using more advanced models. 
 ```{r dataCleaning}
-data <- rename(data, subject = subject.)
-sub_counts <- group_by(data, subject) %>% count(subject)
-sub_counts
+
+data <- data %>% mutate(sex = as.factor(sex))
+data[, -c(1:3)] <- scale(data[, -c(1:3)])
+colSums(data[,-c(1:3)])
+apply(data, 2, sd)
+
+mean_vals <- data %>% group_by(subject) %>% summarise(across(1: PPE, .fns = mean))
+mean_vals
 ```
-Note: graph of # of recordings, slope of the data (days vs updrs score) 
-```{r}
-ggplot(sub_counts, aes(x = subject, y = n)) +
-  geom_point() +
-  labs(title = "Scatterplot of subject vs number of recordings",
-       x = "Subject",
-       y = "N") +
-  theme_minimal()
-```
-TODO: remove the subject key 
+
 ```{r, fig.width=12, fig.height=6}
 updrs_plot <- ggplot(data, aes(x = test_time, y = total_UPDRS, group = subject, color = factor(subject))) +
   geom_line() +
@@ -48,13 +44,14 @@ updrs_plot <- ggplot(data, aes(x = test_time, y = total_UPDRS, group = subject, 
        x = "Test Time",
        y = "Total UPDRS",
        color = "Subject") +
-  scale_x_continuous(limits = c(0, 250), breaks = seq(0, 250, by = 10)) + 
-  scale_y_continuous(limits = c(0, 55), breaks = seq(0, 55, by = 5)) + 
+  scale_x_continuous(limits = c(0, 3), breaks = seq(0, 3, by = 0.5)) + 
+  scale_y_continuous(limits = c(0, 3), breaks = seq(0, 3, by = 0.5)) + 
   theme_minimal()
 
 updrs_plot +
   theme(legend.position = "none")
 ```
+
 This shows the relationship between age and total UPDRS score of PD patients.
 ```{r}
 ggplot(data = mean_vals) +
@@ -65,83 +62,136 @@ ggplot(data = mean_vals) +
 
 The dataset has 42 subjects, with 28 males and 14 females. Each subject had a different number of recordings, with the number ranging from 101 to 168. Due to the discrepancy between the number of recordings available to each subject, we decided to <INSERT PLAN HERE>. 
 
-We took the mean of all the metrics. 
-```{r}
-mean_vals <- data %>% group_by(subject) %>% summarise(across(1: PPE, .fns = mean))
-mean_vals
-```
-
 
 ## Exploratory Data Analysis
+
+```{r}
+sub_counts <- group_by(data, subject) %>% count(subject)
+sub_counts
+```
 
 ```{r}
 gender_count <- group_by(data, sex, subject) %>% count(sex)
 gender_count
 ```
 
+```{r}
+ggplot(sub_counts, aes(x = subject, y = n)) +
+  geom_point() +
+  labs(title = "Scatterplot of subject vs number of recordings",
+       x = "Subject",
+       y = "N") +
+  theme_minimal()
+```
+
 Scatterplot of mean total UPDRS scores of the 42 subjects 
 ```{r}
-ggplot(data = mean_vals, aes(x = Jitter.Abs., y = total_UPDRS)) +
+ggplot(data = mean_vals, aes(x = Jitter_Abs, y = total_UPDRS)) +
   geom_point(size = 1, color = "violet") +
   labs(x = "Absolute Jitters (microsecond)", y = "Total UPDRS") +
   theme_minimal()
 
 ```
-```{r}
+
 ``` {r}
-lm(formula = total_UPDRS ~ Shimmer.dB., data = data) %>% 
+lm(formula = total_UPDRS ~ Shimmer_dB, data = data) %>% 
     tbl_regression(estimate_fun = function(x) style_number(x, digits = 3))
 ```
+
 ```{r}
 ggplot(data = mean_vals, aes(x = age, y = total_UPDRS)) +
   geom_point(size = 1, color = "violet") +
   labs(x = "Age", y = "Total UPDRS") +
   theme_minimal()
 ```
+
 ```{r}
-model_UPDRS <- glm(sex ~ total_UPDRS, data = mean_vals)
+model_UPDRS <- glm(total_UPDRS ~ sex, data = data)
 model_UPDRS
 attach(mean_vals)
 range(mean_vals$total_UPDRS)
 ```
+
 ```{r}
-plot(mean_vals$total_UPDRS, mean_vals$sex, pch = 16, xlab = "Sex", ylab = "Total UPDRS")
+# plot(mean_vals$total_UPDRS, mean_vals$sex, pch = 16, xlab = "Sex", ylab = "Total UPDRS")
 ```
+
 ``` {r}
-lm(formula = total_UPDRS ~ Shimmer.dB., data = data) %>% 
+lm(formula = total_UPDRS ~ Shimmer_dB, data = data) %>% 
     tbl_regression(estimate_fun = function(x) style_number(x, digits = 3))
 ```
+
 ```{r}
 ggplot(data = mean_vals, aes(x = age, y = total_UPDRS)) +
   geom_point(size = 1, color = "violet") +
   labs(x = "Age", y = "Total UPDRS") +
   theme_minimal()
 ```
-```{r}
-model_UPDRS <- glm(sex ~ total_UPDRS, data = mean_vals)
-model_UPDRS
-attach(mean_vals)
-range(mean_vals$total_UPDRS)
-```
-```{r}
-plot(mean_vals$total_UPDRS, mean_vals$sex, pch = 16, xlab = "Sex", ylab = "Total UPDRS")
-```
+
+<!-- ```{r} -->
+<!-- model_UPDRS <- glm(sex ~ total_UPDRS, data = mean_vals) -->
+<!-- model_UPDRS -->
+<!-- attach(mean_vals) -->
+<!-- range(mean_vals$total_UPDRS) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- plot(mean_vals$total_UPDRS, mean_vals$sex, pch = 16, xlab = "Sex", ylab = "Total UPDRS") -->
+<!-- ``` -->
+
 ``` {r}
-lm(formula = total_UPDRS ~ Shimmer.dB., data = data) %>% 
+lm(formula = total_UPDRS ~ Shimmer_dB, data = data) %>% 
     tbl_regression(estimate_fun = function(x) style_number(x, digits = 3))
 ```
+
 ```{r}
 ggplot(data = mean_vals, aes(x = age, y = total_UPDRS)) +
   geom_point(size = 1, color = "violet") +
   labs(x = "Age", y = "Total UPDRS") +
   theme_minimal()
 ```
+
+# ```{r}
+# model_UPDRS <- glm(sex ~ total_UPDRS, data = mean_vals)
+# model_UPDRS
+# attach(mean_vals)
+# range(mean_vals$total_UPDRS)
+# ```
+
+<!-- ```{r} -->
+<!-- plot(mean_vals$total_UPDRS, mean_vals$sex, pch = 16, xlab = "Sex", ylab = "Total UPDRS") -->
+<!-- ``` -->
+
 ```{r}
-model_UPDRS <- glm(sex ~ total_UPDRS, data = mean_vals)
-model_UPDRS
-attach(mean_vals)
-range(mean_vals$total_UPDRS)
+ggplot(sub_counts, aes(x = subject, y = n)) +
+  geom_point() +
+  labs(title = "Scatterplot of subject vs number of recordings",
+       x = "Subject",
+       y = "N") +
+  theme_minimal()
 ```
+
 ```{r}
-plot(mean_vals$total_UPDRS, mean_vals$sex, pch = 16, xlab = "Sex", ylab = "Total UPDRS")
+model_lmer_all_factors <- lmer(total_UPDRS ~ Jitter_percent + Jitter_Abs + Jitter_RAP + Jitter_PPQ5 + Jitter_DDP + Shimmer + Shimmer_dB + Shimmer_APQ3 + Shimmer_APQ5 + Shimmer_APQ11 + Shimmer_DDA + NHR + HNR + RPDE + DFA + PPE + (1 + test_time | subject), data = data)
+model_lmer_all_factors
+summary(model_lmer_all_factors)
 ```
+
+```{r}
+model_lmer_voice <- lmer(total_UPDRS ~ Jitter_percent + Jitter_Abs + Jitter_RAP + Jitter_PPQ5 + Jitter_DDP + Shimmer + Shimmer_dB + Shimmer_APQ3 + Shimmer_APQ5 + Shimmer_APQ11 + Shimmer_DDA + (1 + Jitter_percent | subject) + (1 + Jitter_Abs | subject)  + (1 + Jitter_RAP | subject) + (1 + Jitter_PPQ5 | subject) + (1 + Jitter_DDP | subject) + (1 + Shimmer | subject) + (1 + Shimmer_dB | subject) + (1 + Shimmer_APQ3 | subject) + (1 + Shimmer_APQ5 | subject) + (1 + Shimmer_APQ11 | subject) + (1 + Shimmer_DDA | subject) + (1 + test_time | subject), data = data, control = lmerControl(calc.derivs = F))
+model_lmer_voice
+summary(model_lmer_voice)
+```
+
+```{r}
+model_lmer_dynamic <- lmer(total_UPDRS ~ NHR + HNR + RPDE + DFA + PPE + (1 + NHR | subject) + (1 + HNR | subject) + (1 + RPDE | subject) + (1 + DFA | subject) + (1+ PPE | subject) + (1 + test_time | subject), data = data)
+model_lmer_dynamic
+summary(model_lmer_dynamic)
+```
+
+TODO: population average trend, plot individual changes 
+
+```{r, fig.width=20, fig.height=10}
+pairs.panels(data[, c(7:17)], method = "pearson", hist.col = "blue", density = T, ellipses = T)
+```
+
