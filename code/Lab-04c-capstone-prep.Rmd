@@ -84,3 +84,23 @@ ggplot(data = mean_vals, aes(x = Jitter.Abs., y = total_UPDRS)) +
   theme_minimal()
 
 ```
+```{r}
+``` {r}
+lm(formula = total_UPDRS ~ Shimmer.dB., data = data) %>% 
+    tbl_regression(estimate_fun = function(x) style_number(x, digits = 3))
+```
+```{r}
+ggplot(data = mean_vals, aes(x = age, y = total_UPDRS)) +
+  geom_point(size = 1, color = "violet") +
+  labs(x = "Age", y = "Total UPDRS") +
+  theme_minimal()
+```
+```{r}
+model_UPDRS <- glm(sex ~ total_UPDRS, data = mean_vals)
+model_UPDRS
+attach(mean_vals)
+range(mean_vals$total_UPDRS)
+```
+```{r}
+plot(mean_vals$total_UPDRS, mean_vals$sex, pch = 16, xlab = "Sex", ylab = "Total UPDRS")
+```
