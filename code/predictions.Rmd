@@ -34,35 +34,21 @@ training_data <- training(data_split)
 testing_data <- testing(data_split)
 ```
 
-Predictions with all the voice measures 
-```{r}
-lm_model_all <- lm(total_UPDRS ~ Jitter_percent + Jitter_Abs + Jitter_RAP + Jitter_PPQ5 + Jitter_DDP + Shimmer + Shimmer_dB + Shimmer_APQ3 + Shimmer_APQ5 + Shimmer_APQ11 + Shimmer_DDA, data = training_data, control = lmerControl(calc.derivs = F))
-summary(lm_model_all)
-```
-
-```{r}
-lm(total_UPDRS ~ Jitter_percent + Jitter_Abs + Jitter_RAP + Jitter_PPQ5 + Jitter_DDP + Shimmer + Shimmer_dB + Shimmer_APQ3 + Shimmer_APQ5 + Shimmer_APQ11 + Shimmer_DDA, data = training_data) %>%
-  tbl_regression(estimate_fun = function(x) style_number(x, digits = 3))
-```
-
-```{r}
-predictions <- predict(lm_model_all, newdata = testing_data)
-mean((testing_data$total_UPDRS - predictions)^2)
-```
-
-
 Predictions with some insignificant measures removed 
 ```{r}
-lm_model <- lm(total_UPDRS ~ Jitter_percent + Jitter_PPQ5 + Shimmer_APQ5 + Shimmer_APQ11, data = training_data, control = lmerControl(calc.derivs = F))
-summary(lm_model)
+lm_model_two <- lm(total_UPDRS ~ Jitter_percent + Jitter_PPQ5 + Shimmer + Shimmer_dB + Shimmer_APQ5 + Shimmer_APQ11, data = training_data, control = lmerControl(calc.derivs = F))
+summary(lm_model_two)
 ```
 
 ```{r}
-lm(total_UPDRS ~ Jitter_percent + Jitter_PPQ5 + Shimmer_APQ5 + Shimmer_APQ11, data = training_data) %>%
+lm(total_UPDRS ~ Jitter_percent + Jitter_PPQ5 + Shimmer + Shimmer_dB + Shimmer_APQ5 + Shimmer_APQ11, data = training_data) %>%
   tbl_regression(estimate_fun = function(x) style_number(x, digits = 3))
 ```
 
 ```{r}
-predictions <- predict(lm_model, newdata = testing_data)
-mean((testing_data$total_UPDRS - predictions)^2)
+predictions_two <- predict(lm_model_two, newdata = testing_data)
+mean((testing_data$total_UPDRS - predictions_two)^2)
 ```
+
+
+

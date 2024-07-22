@@ -29,24 +29,22 @@ We took the mean of all the metrics and we will use this for further analysis be
 ```{r dataCleaning}
 
 data <- data %>% mutate(sex = as.factor(sex))
-data[, -c(1:3)] <- scale(data[, -c(1:3)])
-colSums(data[,-c(1:3)])
+data[, -c(1:6)] <- scale(data[, -c(1:6)])
+colSums(data[,-c(1:6)])
 apply(data, 2, sd)
 
 mean_vals <- data %>% group_by(subject) %>% summarise(across(1: PPE, .fns = mean))
 mean_vals
 ```
 
-```{r, fig.width=12, fig.height=6}
-updrs_plot <- ggplot(data, aes(x = test_time, y = total_UPDRS, group = subject, color = factor(subject))) +
+```{r, fig.width=8, fig.height=6}
+updrs_plot <- ggplot(data, aes(x = test_time, y = total_UPDRS, group = subject, color = as.factor(sex))) + 
+  scale_color_manual(values = c("dodgerblue4", "firebrick2")) + 
   geom_line() +
-  geom_point() +
   labs(title = "Total UPDRS Over Test Time for Each Subject",
        x = "Test Time",
        y = "Total UPDRS",
        color = "Subject") +
-  scale_x_continuous(limits = c(0, 3), breaks = seq(0, 3, by = 0.5)) + 
-  scale_y_continuous(limits = c(0, 3), breaks = seq(0, 3, by = 0.5)) + 
   theme_minimal()
 
 updrs_plot +
@@ -105,6 +103,65 @@ ggplot(data = mean_vals, aes(x = age, y = total_UPDRS)) +
   labs(x = "Age", y = "Total UPDRS") +
   theme_minimal()
 ```
+Shimmer vs total UPDRS 
+```{r}
+data %>% 
+  mutate(subject = as.factor(subject)) %>% 
+  ggplot(aes(x = Shimmer, y = total_UPDRS)) + 
+  geom_point(size = 1, aes(color = subject)) + 
+  labs(x = "Shimmer", y = "Total UPDRS") + 
+  theme_minimal() 
+```
+Shimmer dB vs total UPDRS 
+```{r}
+data %>% 
+  mutate(subject = as.factor(subject)) %>% 
+  ggplot(aes(x = Shimmer_dB, y = total_UPDRS)) + 
+  geom_point(size = 1, aes(color = subject)) + 
+  labs(x = "Shimmer (dB)", y = "Total UPDRS") + 
+  theme_minimal() 
+```
+
+Shimmer_APQ3 vs total UPDRS 
+```{r}
+data %>% 
+  mutate(subject = as.factor(subject)) %>% 
+  ggplot(aes(x = Shimmer_APQ3, y = total_UPDRS)) + 
+  geom_point(size = 1, aes(color = subject)) + 
+  labs(x = "Shimmer (dB)", y = "Total UPDRS") + 
+  theme_minimal() 
+```
+
+Shimmer_APQ5 vs total UPDRS 
+```{r}
+data %>% 
+  mutate(subject = as.factor(subject)) %>% 
+  ggplot(aes(x = Shimmer_APQ5, y = total_UPDRS)) + 
+  geom_point(size = 1, aes(color = subject)) + 
+  labs(x = "Shimmer APQ5", y = "Total UPDRS") + 
+  theme_minimal() 
+```
+
+Shimmer_APQ11 vs total UPDRS 
+```{r}
+data %>% 
+  mutate(subject = as.factor(subject)) %>% 
+  ggplot(aes(x = Shimmer_APQ11, y = total_UPDRS)) + 
+  geom_point(size = 1, aes(color = subject)) + 
+  labs(x = "Shimmer APQ 11", y = "Total UPDRS") + 
+  theme_minimal() 
+```
+
+Shimmer_DDA vs total UPDRS 
+```{r}
+data %>% 
+  mutate(subject = as.factor(subject)) %>% 
+  ggplot(aes(x = Shimmer_DDA, y = total_UPDRS)) + 
+  geom_point(size = 1, aes(color = subject)) + 
+  labs(x = "Shimmer DDA", y = "Total UPDRS") + 
+  theme_minimal() 
+```
+
 
 ```{r}
 model_UPDRS <- glm(total_UPDRS ~ sex, data = data)
@@ -172,23 +229,23 @@ ggplot(sub_counts, aes(x = subject, y = n)) +
   theme_minimal()
 ```
 
-```{r}
-model_lmer_all_factors <- lmer(total_UPDRS ~ Jitter_percent + Jitter_Abs + Jitter_RAP + Jitter_PPQ5 + Jitter_DDP + Shimmer + Shimmer_dB + Shimmer_APQ3 + Shimmer_APQ5 + Shimmer_APQ11 + Shimmer_DDA + NHR + HNR + RPDE + DFA + PPE + (1 + test_time | subject), data = data)
-model_lmer_all_factors
-summary(model_lmer_all_factors)
-```
+<!-- ```{r} -->
+<!-- model_lmer_all_factors <- lmer(total_UPDRS ~ Jitter_percent + Jitter_Abs + Jitter_RAP + Jitter_PPQ5 + Jitter_DDP + Shimmer + Shimmer_dB + Shimmer_APQ3 + Shimmer_APQ5 + Shimmer_APQ11 + Shimmer_DDA + NHR + HNR + RPDE + DFA + PPE + (1 + test_time | subject), data = data) -->
+<!-- model_lmer_all_factors -->
+<!-- summary(model_lmer_all_factors) -->
+<!-- ``` -->
 
-```{r}
-model_lmer_voice <- lmer(total_UPDRS ~ Jitter_percent + Jitter_Abs + Jitter_RAP + Jitter_PPQ5 + Jitter_DDP + Shimmer + Shimmer_dB + Shimmer_APQ3 + Shimmer_APQ5 + Shimmer_APQ11 + Shimmer_DDA + (1 + Jitter_percent | subject) + (1 + Jitter_Abs | subject)  + (1 + Jitter_RAP | subject) + (1 + Jitter_PPQ5 | subject) + (1 + Jitter_DDP | subject) + (1 + Shimmer | subject) + (1 + Shimmer_dB | subject) + (1 + Shimmer_APQ3 | subject) + (1 + Shimmer_APQ5 | subject) + (1 + Shimmer_APQ11 | subject) + (1 + Shimmer_DDA | subject) + (1 + test_time | subject), data = data, control = lmerControl(calc.derivs = F))
-model_lmer_voice
-summary(model_lmer_voice)
-```
+<!-- ```{r} -->
+<!-- model_lmer_voice <- lmer(total_UPDRS ~ Jitter_percent + Jitter_Abs + Jitter_RAP + Jitter_PPQ5 + Jitter_DDP + Shimmer + Shimmer_dB + Shimmer_APQ3 + Shimmer_APQ5 + Shimmer_APQ11 + Shimmer_DDA + (1 + Jitter_percent | subject) + (1 + Jitter_Abs | subject)  + (1 + Jitter_RAP | subject) + (1 + Jitter_PPQ5 | subject) + (1 + Jitter_DDP | subject) + (1 + Shimmer | subject) + (1 + Shimmer_dB | subject) + (1 + Shimmer_APQ3 | subject) + (1 + Shimmer_APQ5 | subject) + (1 + Shimmer_APQ11 | subject) + (1 + Shimmer_DDA | subject) + (1 + test_time | subject), data = data, control = lmerControl(calc.derivs = F)) -->
+<!-- model_lmer_voice -->
+<!-- summary(model_lmer_voice) -->
+<!-- ``` -->
 
-```{r}
-model_lmer_dynamic <- lmer(total_UPDRS ~ NHR + HNR + RPDE + DFA + PPE + (1 + NHR | subject) + (1 + HNR | subject) + (1 + RPDE | subject) + (1 + DFA | subject) + (1+ PPE | subject) + (1 + test_time | subject), data = data)
-model_lmer_dynamic
-summary(model_lmer_dynamic)
-```
+<!-- ```{r} -->
+<!-- model_lmer_dynamic <- lmer(total_UPDRS ~ NHR + HNR + RPDE + DFA + PPE + (1 + NHR | subject) + (1 + HNR | subject) + (1 + RPDE | subject) + (1 + DFA | subject) + (1+ PPE | subject) + (1 + test_time | subject), data = data) -->
+<!-- model_lmer_dynamic -->
+<!-- summary(model_lmer_dynamic) -->
+<!-- ``` -->
 
 TODO: population average trend, plot individual changes 
 
